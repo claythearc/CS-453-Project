@@ -16,6 +16,20 @@
 <script>
     littleavg = [1];
     bigavg = [5];
+    function request() {
+        days = document.getElementById("reqd").value;
+        let temp = 0;
+        for (let x = 0; x < bigavg.length; x++) {
+            temp += +bigavg[x];
+        }
+        temp = +temp / +bigavg.length;
+        if (days <= temp) {
+            alert("Order successful, processing order")
+        }
+        else {
+            alert("Order not in the average range, can't be fulfilled.")
+        }
+    }
     function update(box) {
         let items = document.getElementsByName("item");
         let temp = 0;
@@ -143,7 +157,9 @@ function sync() {
     <b>Grouped Order Time: </b><input type="text" id="status" value="">
 
     <br>
-
+    <b>How many days ahead would you like to request? </b>  <input type="text" id="reqd"> <input type="button"
+                                                                                                 value="Request!"
+                                                                                                 onclick="request()">
 
 
 </HTML>
