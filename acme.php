@@ -14,6 +14,33 @@
 <HTML>
 
 <script>
+    littleavg = [1];
+    bigavg = [5];
+    function update(box) {
+        let items = document.getElementsByName("item");
+        let temp = 0;
+        if (box === 3) {
+            for (let x = 0; x < littleavg.length; x++) {
+                temp += +littleavg[x];
+            }
+            temp = +temp / +littleavg.length;
+            document.getElementById("toyeaster").value = temp + " days";
+        }
+        if (box === 1) {
+            for (let x = 0; x < bigavg.length; x++) {
+                temp += +bigavg[x];
+            }
+            temp = +temp / +bigavg.length;
+            document.getElementById("bigeaster").value = temp + " minutes";
+        }
+        if (box === 2) {
+            for (let x = 0; x < bigavg.length; x++) {
+                temp += +bigavg[x];
+            }
+            temp = +temp / +bigavg.length;
+            document.getElementById("smalleaster").value = temp + " minutes";
+        }
+    }
 function test() {
     let minutes = 0;
     let days = 0;
@@ -25,35 +52,35 @@ function test() {
         document.getElementById("stuffed").value = 0 + " minutes";
     }
     if(items[1].checked === true) {
-        let temp = async("bigeaster");
+        let temp = sync("actbig");
+        bigavg.push(temp);
         if(groups[1].checked === true) {
             if(+temp > +groupdays) {
-                groupdays = temp;
+                groupminutes= temp;
             }
         }
-//        document.getElementById("bigeaster").value = temp;
+        document.getElementById("actbig").value = temp + " minutes";
     }
 
     if(items[2].checked===true) {
-        let temp = async("smalleaster");
+        let temp = sync("actsmall");
+        bigavg.push(temp);
         if(groups[2].checked === true) {
             if(+temp > +groupdays) {
-                groupdays = temp;
+                groupminutes = temp;
             }
         }
-//        document.getElementById("smalleaster").value = temp;
+        document.getElementById("actsmall").value = temp + " minutes";
     }
 
     if(items[3].checked === true) {
-        let temp = sync();
-        if(groups[3].checked === true) {
-            if(+temp > +groupminutes) {
-                if(+groupdays === 0) {
-                    groupminutes = temp;
-                }
+        let temp = async("acttoy");
+        littleavg.push(temp);
+        if (groups[3].checked === true) {
+            if (+groupdays < +temp) {
+                groupdays = temp;
             }
         }
-        document.getElementById("toyeaster").value = temp + " minutes";
     }
 
     document.getElementById("status").value = groupdays + " days " + groupminutes + " minutes ";
@@ -67,6 +94,7 @@ function async(foo) {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 document.getElementById(foo).value = +xhr.responseText + " days";
+                document.getElementById("status").value = +xhr.responseText + " days";
                 return +xhr.responseText;
             }
         }
@@ -91,20 +119,31 @@ function sync() {
 </table>
 <form>
 
-    <input type="checkbox" name="item" value="warehouse"> Stuffed Bunny Rabit Toy <input type="checkbox" name="grouped"/>
-    <b> Delivery Time: </b><input type="text" id="stuffed" value="0"><br>
+    <input type="checkbox" name="item" value="warehouse" onclick="update(0)"> Stuffed Bunny Rabit Toy <input type="checkbox" name="grouped"/>
+    <b> Est Delivery Time: </b><input type="text" id="stuffed" value="0">
+    <b> Actual Delivery Time: </b><input type="text" id="actstuffed" value="0">
+    <br>
 
-    <input type="checkbox" name="item" value="bigstuff"> Big Easter Basket <input type="checkbox" name="grouped"/>
-    <b> Delivery Time: </b><input type="text" id="bigeaster" value="0"><br>
+    <input type="checkbox" name="item" value="bigstuff" onclick="update(1)"> Big Easter Basket <input type="checkbox" name="grouped"/>
+    <b> Est Delivery Time: </b><input type="text" id="bigeaster" value="0">
+    <b> Actual Delivery Time: </b><input type="text" id="actbig" value="0">
+    <br>
 
-    <input type="checkbox" name="item" value="bigstuff"> Small Easter Basket <input type="checkbox" name="grouped"/>
-    <b> Delivery Time: </b><input type="text" id="smalleaster" value="0"><br>
+    <input type="checkbox" name="item" value="bigstuff" onclick="update(2)"> Small Easter Basket <input type="checkbox" name="grouped"/>
+    <b> Est Delivery Time: </b><input type="text" id="smalleaster" value="0">
+    <b> Actual Delivery Time: </b><input type="text" id="actsmall" value="0">
+    <br>
 
-    <input type="checkbox" name="item" value="littlestuff"> Toy Easter Basket <input type="checkbox" name="grouped"/>
-    <b> Delivery Time: </b><input type="text" id="toyeaster" value="0"><br>
+    <input type="checkbox" name="item" value="littlestuff" onclick="update(3)"> Toy Easter Basket <input type="checkbox" name="grouped"/>
+    <b> Est Delivery Time: </b><input type="text" id="toyeaster" value="0">
+    <b> Actual Delivery Time: </b><input type="text" id="acttoy" value="0">
+    <br>
     <input type="button" value="Submit" onclick="test()">
 </form>
     <b>Grouped Order Time: </b><input type="text" id="status" value="">
+
+    <br>
+
 
 
 </HTML>
