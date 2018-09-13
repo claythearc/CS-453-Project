@@ -25,6 +25,7 @@
         temp = +temp / +bigavg.length;
         if (days <= temp) {
             alert("Order successful, processing order")
+            test();
         }
         else {
             alert("Order not in the average range, can't be fulfilled.")
@@ -56,6 +57,8 @@
         }
     }
 function test() {
+    let tbox = document.getElementById("updates");
+    tbox.value = "Ordering from warehouses";
     let minutes = 0;
     let days = 0;
     let groupminutes = 0;
@@ -64,9 +67,12 @@ function test() {
     let groups = document.getElementsByName("grouped");
     if(items[0].checked === true) {
         document.getElementById("stuffed").value = 0 + " minutes";
+        tbox.value += "\n Big Basket ordered from ACME Warehouse";
     }
     if(items[1].checked === true) {
+        tbox.value += "\n Ordered from BigStuff";
         let temp = sync("actbig");
+        tbox.value += "\n It will arrive in " + temp + " minutes";
         bigavg.push(temp);
         if(groups[1].checked === true) {
             if(+temp > +groupdays) {
@@ -77,7 +83,9 @@ function test() {
     }
 
     if(items[2].checked===true) {
+        tbox.value += "\n Small Basket Ordered from Big Stuff"
         let temp = sync("actsmall");
+        tbox.value += "\n it will arrive in " + temp + " minutes";
         bigavg.push(temp);
         if(groups[2].checked === true) {
             if(+temp > +groupdays) {
@@ -88,6 +96,7 @@ function test() {
     }
 
     if(items[3].checked === true) {
+        tbox.value += "\n Ordered Toy Basket from Little Stuff";
         let temp = async("acttoy");
         littleavg.push(temp);
         if (groups[3].checked === true) {
@@ -109,6 +118,7 @@ function async(foo) {
             if (xhr.status === 200) {
                 document.getElementById(foo).value = +xhr.responseText + " days";
                 document.getElementById("status").value = +xhr.responseText + " days";
+                document.getElementById("updates").value += " it will arrive in " + xhr.responseText + " days";
                 return +xhr.responseText;
             }
         }
@@ -152,7 +162,6 @@ function sync() {
     <b> Est Delivery Time: </b><input type="text" id="toyeaster" value="0">
     <b> Actual Delivery Time: </b><input type="text" id="acttoy" value="0">
     <br>
-    <input type="button" value="Submit" onclick="test()">
 </form>
     <b>Grouped Order Time: </b><input type="text" id="status" value="">
 
@@ -160,6 +169,8 @@ function sync() {
     <b>How many days ahead would you like to request? </b>  <input type="text" id="reqd"> <input type="button"
                                                                                                  value="Request!"
                                                                                                  onclick="request()">
+    <b>Order Status</b><br>
+    <textarea id="updates" rows="10" cols="180"></textarea>
 
 
 </HTML>
