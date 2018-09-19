@@ -24,36 +24,39 @@
         }
         temp = +temp / +bigavg.length;
         if (days <= temp) {
-            alert("Order successful, processing order")
+            alert("Order successful, processing order");
             test();
         }
         else {
-            alert("Order not in the average range, can't be fulfilled.")
+            alert("Order not in the average range, can't be fulfilled.");
         }
     }
     function update(box) {
         let items = document.getElementsByName("item");
+        if (!items[box].checked) {
+            return 0;
+        }
         let temp = 0;
         if (box === 3) {
             for (let x = 0; x < littleavg.length; x++) {
                 temp += +littleavg[x];
             }
             temp = +temp / +littleavg.length;
-            document.getElementById("toyeaster").value = temp + " days";
+            document.getElementById("toyeaster").value = Math.floor(temp) + " days";
         }
         if (box === 1) {
             for (let x = 0; x < bigavg.length; x++) {
                 temp += +bigavg[x];
             }
             temp = +temp / +bigavg.length;
-            document.getElementById("bigeaster").value = temp + " minutes";
+            document.getElementById("bigeaster").value = Math.floor(temp) + " minutes";
         }
         if (box === 2) {
             for (let x = 0; x < bigavg.length; x++) {
                 temp += +bigavg[x];
             }
             temp = +temp / +bigavg.length;
-            document.getElementById("smalleaster").value = temp + " minutes";
+            document.getElementById("smalleaster").value = Math.floor(temp) + " minutes";
         }
     }
 function test() {
@@ -98,7 +101,6 @@ function test() {
     if(items[3].checked === true) {
         tbox.value += "\n Ordered Toy Basket from Little Stuff";
         let temp = async("acttoy");
-        littleavg.push(temp);
         if (groups[3].checked === true) {
             if (+groupdays < +temp) {
                 groupdays = temp;
@@ -117,8 +119,11 @@ function async(foo) {
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
                 document.getElementById(foo).value = +xhr.responseText + " days";
-                document.getElementById("status").value = +xhr.responseText + " days";
+                if(document.getElementsByName("grouped")[3].checked) {
+                    document.getElementById("status").value = +xhr.responseText + " days";
+                }
                 document.getElementById("updates").value += " it will arrive in " + xhr.responseText + " days";
+                littleavg.push(+xhr.responseText);
                 return +xhr.responseText;
             }
         }
