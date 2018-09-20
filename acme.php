@@ -23,12 +23,13 @@
         days = document.getElementById("reqd").value;
         let temp = 0;
 		//Calculate the average of big and little stuff
-        for (let x = 0; x < bigavg.length; x++) {
-            temp += +bigavg[x];
+        for (let x = 0; x < littleavg.length; x++) {
+            temp += +littleavg[x];
         }
-        temp = +temp / +bigavg.length;
+        temp = +temp / +littleavg.length;
 		//If the days are less than the averages process the order.
-        if (days <= temp) {
+        if (days >= temp) {
+			console.log(days + " " + temp);
             alert("Order successful, processing order");
             test();
         }
@@ -66,7 +67,7 @@
             temp = +temp / +bigavg.length;
             document.getElementById("smalleaster").value = Math.floor(temp) + " minutes";
         }
-    }
+	}
 	//This function fills the processing window at the bottom.
 function test() {
 	//It just shows step by step what's happening
@@ -115,7 +116,7 @@ function test() {
     }
 
     if(items[3].checked === true) {
-        tbox.value += "\n Ordered Toy Basket from Little Stuff";
+        tbox.value += "\nOrdered Toy Basket from Little Stuff";
         let temp = async("acttoy");
         if (groups[3].checked === true) {
             if (+groupdays < +temp) {
@@ -125,7 +126,52 @@ function test() {
     }
 
     document.getElementById("status").value = groupdays + " days " + groupminutes + " minutes ";
+	let groupstr = "Shipping the following items to ACME for grouped shipping: ";
+	let grouped = false;
+	let solo = false;
+	let boxes = document.getElementsByName("grouped");
+	if (boxes[1].checked === true) {
+			groupstr += " Big Easter Basket"
+			grouped = true;
+	}
+	if (boxes[2].checked === true) {
+		grouped = true;
+			groupstr += " Small Easter Backet"
+	}
+	if (boxes[3].checked === true) {
+		grouped = true;
+			groupstr += " Toy Easter Basket."
+	}
+		
+		
+	custstr = "Shipping the following items direct to the customer: ";	
+	if (boxes[1].checked === false) {
+		if(items[1].checked === true) {
+			solo = true;
+			custstr += " Big Easter Basket";
+		}
+	}
+	if (boxes[2].checked === false) {
+		if(items[2].checked === true) {
+			solo = true;
+			custstr += " Small Easter Backet";
+		}
+	}
+	if (boxes[3].checked === false) {
+		if(items[3].checked === true) {
+			solo = true;
+			custstr += " Toy Easter Basket.";
+		}
+	}
+	if(	grouped) {
+	document.getElementById("updates").value += "\n" + groupstr;
+	}
+	if(solo){
+	document.getElementById("updates").value +=  "\n" + custstr;
+	}
+
 }
+
 
 //Little Stuff responds in days
 //Async function to send the request off.
@@ -143,7 +189,10 @@ function async(foo) {
                 if(document.getElementsByName("grouped")[3].checked) {
                     document.getElementById("status").value = +xhr.responseText + " days";
                 }
-                document.getElementById("updates").value += " it will arrive in " + xhr.responseText + " days";
+                document.getElementById("updates").value += "\n Toy Easter Box will arrive in " + xhr.responseText + " days \n";
+				if( +xhr.responseText >= +document.getElementById("reqd").value) {
+					document.getElementById("updates").value += "Looks like the shipment will be late :("
+				}
                 littleavg.push(+xhr.responseText);
                 return +xhr.responseText;
             }
