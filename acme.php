@@ -14,15 +14,20 @@
 <HTML>
 
 <script>
+	/* Variables for the average shipping of little stuff and big stuff */
     littleavg = [1];
     bigavg = [5];
+	//This function is called whenever you want to verify an order will get there in time
     function request() {
+		//get the value from the requested field. (How many days out to order)
         days = document.getElementById("reqd").value;
         let temp = 0;
+		//Calculate the average of big and little stuff
         for (let x = 0; x < bigavg.length; x++) {
             temp += +bigavg[x];
         }
         temp = +temp / +bigavg.length;
+		//If the days are less than the averages process the order.
         if (days <= temp) {
             alert("Order successful, processing order");
             test();
@@ -31,11 +36,14 @@
             alert("Order not in the average range, can't be fulfilled.");
         }
     }
+	//Helper function to update the associated boxes.
     function update(box) {
+		//get all the check boxes for each item.
         let items = document.getElementsByName("item");
         if (!items[box].checked) {
             return 0;
         }
+		//If the checkbox is checked for the corresponding item, update the value for the passed objects average shipping time.
         let temp = 0;
         if (box === 3) {
             for (let x = 0; x < littleavg.length; x++) {
@@ -59,15 +67,23 @@
             document.getElementById("smalleaster").value = Math.floor(temp) + " minutes";
         }
     }
+	//This function fills the processing window at the bottom.
 function test() {
+	//It just shows step by step what's happening
     let tbox = document.getElementById("updates");
     tbox.value = "Ordering from warehouses";
+	//Initialize placeholder values
     let minutes = 0;
     let days = 0;
     let groupminutes = 0;
     let groupdays = 0;
     let items = document.getElementsByName("item");
     let groups = document.getElementsByName("grouped");
+	
+	//The following snippets work by -
+	//Is the checkbox checked? if it is - call the request (sync vs. async), and push the actual result to the text box.
+	//Then update the big order status box at the end
+	//Then, update the average time.
     if(items[0].checked === true) {
         document.getElementById("stuffed").value = 0 + " minutes";
         tbox.value += "\n Big Basket ordered from ACME Warehouse";
@@ -112,12 +128,17 @@ function test() {
 }
 
 //Little Stuff responds in days
+//Async function to send the request off.
 function async(foo) {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "./littlestuff.php", true);
     xhr.onload = function (e) {
+		//Do the request.
+		//See if the status is OK
         if (xhr.readyState === 4) {
             if (xhr.status === 200) {
+				//If it is, update the text box
+				//Then push the value into little stuff & update the grouped value.
                 document.getElementById(foo).value = +xhr.responseText + " days";
                 if(document.getElementsByName("grouped")[3].checked) {
                     document.getElementById("status").value = +xhr.responseText + " days";
@@ -131,6 +152,7 @@ function async(foo) {
     xhr.send(null);
 }
 //Big stuff responds in minutes
+//Sync request to send the information off.
 function sync() {
     var request = new XMLHttpRequest();
     request.open('GET', './bigstuff.php', false);  // `false` makes the request synchronous
